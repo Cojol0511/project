@@ -13,25 +13,6 @@ const ANDROID_CLIENT_ID = "AIzaSyBI3jcyrx6ctJ41CVtVjXaWMRy0tQosHfQ";
 
 const userInfo = { username: "admin", password: "root" };
 
-//expo doc
-async function signInWithGoogleAsync() {
-  try {
-    const result = await Google.logInAsync({
-      androidClientId:
-        "544097032846-7j703hs6kqpk98vr16ol1hri6oia031j.apps.googleusercontent.com",
-      scopes: ["profile", "email"],
-    });
-
-    if (result.type === "success") {
-      return result.accessToken;
-    } else {
-      return { cancelled: true };
-    }
-  } catch (e) {
-    return { error: true };
-  }
-}
-
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -48,9 +29,12 @@ export default class LoginScreen extends Component {
       userInfo.username === this.state.username &&
       userInfo.password === this.state.password
     ) {
-      alert("Logged In");
+      this.props.navigation.navigate("Profile", {
+        username: this.state.username,
+      });
     } else {
       alert("User or Password is incorrect.");
+      return false;
     }
   };
 
@@ -64,7 +48,7 @@ export default class LoginScreen extends Component {
       });
 
       if (result.type === "success") {
-        console.log("LoginScreen.js", result.user.givenName);
+        console.log("Success", result.user.givenName);
         this.props.navigation.navigate("Profile", {
           username: result.user.givenName,
         }); //after Google login redirect to Profile
@@ -73,7 +57,7 @@ export default class LoginScreen extends Component {
         return { cancelled: true };
       }
     } catch (error) {
-      console.log("LoginScreen.js", error);
+      console.log("Error: ", error);
       return { error: true };
     }
   };
